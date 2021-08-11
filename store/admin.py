@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.db.models.aggregates import Count
+from django.urls import reverse
+from django.utils.html import format_html, urlencode
 from . import models
 
 
@@ -9,7 +11,14 @@ class CollectionAdmin(admin.ModelAdmin):
 
     @admin.display(ordering='products_count')
     def products_count(self, collection):
-        return collection.products_count
+        url = (
+            reverse('admin:store_product_changelist') 
+            + '?'
+            + urlencode({
+                'collection__id': str(collection.id)
+            })
+        ) 
+        return format_html('<a href="{}">{}</a>', url, collection.products_count)
 
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(
@@ -39,8 +48,10 @@ class ProductAdmin(admin.ModelAdmin):
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'membership']
     list_editable = ['membership']
-    ordering = ['first_name', 'last_name']
     list_per_page = 10
+    ordering = ['first_name', 'last_name']
+    search_fields = ['first_name__istartswith', 'last_name__istartswith']
+
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
