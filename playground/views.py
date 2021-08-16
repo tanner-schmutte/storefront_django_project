@@ -4,6 +4,6 @@ from store.models import Product
 
 
 def say_hello(request):
-    queryset = Product.objects.filter(inventory=F('collection__id'))
+    product = Product.objects.earliest('unit_price')
 
-    return render(request, 'hello.html', {'name': 'Tanner', 'products': list(queryset)})
+    return render(request, 'hello.html', {'name': 'Tanner', 'product': product})
