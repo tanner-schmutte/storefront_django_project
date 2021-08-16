@@ -4,6 +4,6 @@ from store.models import Product
 
 
 def say_hello(request):
-    product = Product.objects.earliest('unit_price')
+    product = Product.objects.latest('unit_price')
 
     return render(request, 'hello.html', {'name': 'Tanner', 'product': product})
